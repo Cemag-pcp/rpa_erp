@@ -55,12 +55,16 @@ class RequisitarItem(BaseERP):
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[1]/td[4]/table/tbody/tr/td[1]/input', tipo_requisicao)
             self.esperar(.5)
+            self.verificar_se_escreveu(By.XPATH, '//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[1]/td[4]/table/tbody/tr/td[1]/input', tipo_requisicao)
+            self.esperar(.5)
 
             #Inputando requisitante
             print("Escrevendo requisitante")
             self.clicar(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]', 5)
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input', requisitante_matricula)
+            self.esperar(.5)
+            self.verificar_se_escreveu(By.XPATH, '//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input', requisitante_matricula)
             self.esperar(.5)
 
             #Aguardar erro
@@ -83,6 +87,8 @@ class RequisitarItem(BaseERP):
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[3]/td[4]/table/tbody/tr/td[1]/input', ccusto_text)
             self.esperar(.5)
+            self.verificar_se_escreveu(By.XPATH, '//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[3]/td[4]/table/tbody/tr/td[1]/input', ccusto_text)
+            self.esperar(.5)
 
             #Aguardar erro
             print("Aguardando erro")
@@ -104,6 +110,8 @@ class RequisitarItem(BaseERP):
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]/input', rec)
             self.esperar(.5)
+            self.verificar_se_escreveu(By.XPATH, '//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]/input', rec)
+            self.esperar(.5)
 
             #Aguardar erro
             print("Aguardando erro")
@@ -124,12 +132,16 @@ class RequisitarItem(BaseERP):
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[7]/td[3]/table/tbody/tr/td[1]/input', qtd)
             self.esperar(.5)
+            self.verificar_se_escreveu(By.XPATH, '//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[7]/td[3]/table/tbody/tr/td[1]/input', qtd)
+            self.esperar(.5)
 
             #inputando Observação
             print("Escrevendo observação")
             self.clicar(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[9]/td[2]/table/tbody/tr/td[1]/textarea', 5)
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[9]/td[2]/table/tbody/tr/td[1]/textarea', observacao_text)
+            self.esperar(.5)
+            self.verificar_se_escreveu(By.XPATH, '//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[9]/td[2]/table/tbody/tr/td[1]/textarea', observacao_text)
             self.esperar(.5)
 
             #Clicando em confirmar (insert)
@@ -183,6 +195,8 @@ class RequisitarItem(BaseERP):
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td[1]/input', 'Movimentação de depósitos')
             self.esperar(.5)
+            self.verificar_se_escreveu(By.XPATH, '//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td[1]/input', 'Movimentação de depósitos')
+            self.esperar(.5)
             self.clicar(By.XPATH,'//*[@id="1"]', 5)
             self.esperar(.5)
             self.clicar(By.XPATH,'//*[@id="buttonsBar_grLookup"]/td[1]', 5)
@@ -200,6 +214,8 @@ class RequisitarItem(BaseERP):
             self.clicar(By.XPATH,'//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]', 5)
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]/input', datetime.datetime.now().date().strftime('%d/%m/%Y'))
+            self.esperar(.5)
+            self.verificar_se_escreveu(By.XPATH, '//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]/input', datetime.datetime.now().date().strftime('%d/%m/%Y'))
             self.esperar(.5)
 
             # clicando em confirmar baixa
@@ -246,5 +262,3 @@ class RequisitarItem(BaseERP):
                 enviar_status_via_api(id,'OK',tipo_requisicao)
                 # devolve sucesso pro banco
             self.esperar(.5)                
-
-

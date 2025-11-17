@@ -72,6 +72,62 @@ class BaseERP:
             
             return False
 
+    def verificar_se_escreveu(self, by, value, texto, limpar=True, tentativas=2):
+        """
+        Verifica se o input está preenchido.
+        - Se já estiver preenchido: só loga e retorna True.
+        - Se estiver vazio: escreve `texto`, verifica se preencheu.
+        - Se após escrever continuar vazio, tenta novamente até 'tentativas' vezes.
+
+        by: tipo de seletor (By.ID, By.XPATH, etc.)
+        value: valor do seletor
+        texto: texto que será escrito caso o campo esteja vazio
+        limpar: se True, dá .clear() antes de escrever
+        tentativas: número máximo de tentativas de escrita/verificação
+
+        Retorna:
+            True  -> se o campo estiver ou ficar preenchido
+            False -> se não conseguir preencher
+        """
+        try:
+            elem = self.wait.until(EC.presence_of_element_located((by, value)))
+        except TimeoutException:
+            print(f"[ERRO] Não encontrou campo: {value}")
+            return False
+
+        for tentativa in range(1, tentativas + 1):
+            # 1) Verifica se já está preenchido
+            valor_atual = (elem.get_attribute("value") or "").strip()
+
+            if valor_atual:
+                print(f"[INFO] Campo {value} já está preenchido com: '{valor_atual}'")
+                return True
+
+            # 2) Se estiver vazio, tenta escrever
+            print(f"[INFO] Campo {value} está vazio. Tentando escrever (tentativa {tentativa}/{tentativas})...")
+
+            if limpar:
+                elem.clear()
+                self.esperar(0.5)
+                print("[INFO] Limpando campo antes de escrever")
+
+            elem.send_keys(texto)
+            self.esperar(0.5)
+            elem.send_keys(Keys.TAB)
+            self.esperar(0.5)
+
+            # 3) Verifica novamente após escrever
+            valor_atual = (elem.get_attribute("value") or "").strip()
+
+            if valor_atual:
+                print(f"[INFO] Campo {value} preenchido com sucesso: '{valor_atual}'")
+                return True
+            else:
+                print(f"[ALERTA] Campo {value} ainda está vazio após tentativa {tentativa}")
+
+        print(f"[ERRO] Não foi possível preencher o campo {value} após {tentativas} tentativas.")
+        return False
+
     # =============================
     # INICIALIZAR ERP
     # =============================
