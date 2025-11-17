@@ -27,6 +27,8 @@ class RequisitarItem(BaseERP):
             print('-------------------------------------------------------')
             print(f"[INFO] Indo para item {rec}\nRequisitado por: {requisitante_matricula}\nRequisitado no dia: {row[3]}")
 
+            self.fechar_aba_ate_fechar()
+
             self.esperar(2)
             self.abrir_menu_2()
 

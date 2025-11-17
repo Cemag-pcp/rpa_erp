@@ -212,8 +212,8 @@ class BaseERP:
                         "//span[contains(@onclick, 'Environment.getInstance().closeTab')]/div"
                     ))
                 )
-                btn_fechar.click()
                 self.esperar(0.5)
+                btn_fechar.click()
 
             except Exception as e:
                 print(f"[WARN] Não conseguiu clicar no botão de fechar: {e}")
