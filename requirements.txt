@@ -1,0 +1,6 @@
+pandas==2.3.3
+pip-chill==1.0.3
+psycopg2==2.9.11
+pysocks==1.7.1
+requests==2.32.5
+selenium==4.36.0
