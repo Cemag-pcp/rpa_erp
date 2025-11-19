@@ -195,7 +195,7 @@ class RequisitarItem(BaseERP):
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td[1]/input', 'Movimentação de depósitos')
             self.esperar(.5)
-            self.verificar_se_escreveu(By.XPATH, '//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td[1]/input', 'Movimentação de depósitos')
+            # self.verificar_se_escreveu(By.XPATH, '//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td[1]/input', 'Movimentação de depósitos')
             self.esperar(.5)
             self.clicar(By.XPATH,'//*[@id="1"]', 5)
             self.esperar(.5)

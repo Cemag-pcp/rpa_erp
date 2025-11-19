@@ -9,7 +9,9 @@ from selenium.common.exceptions import (
     ElementClickInterceptedException,
 )
 from selenium.webdriver.common.keys import Keys
+
 import pandas as pd
+from datetime import datetime
 
 class BaseERP:
     """
@@ -361,7 +363,7 @@ class BaseERP:
                 except Exception as e:
                     print(f"[WARN] Não consegui clicar em OK do erro: {e}")
 
-            return mensagem
+            return mensagem + " - " + datetime.now().strftime("%d/%m/%Y %H:%M")
 
         except TimeoutException:
             # Não apareceu mensagem de erro dentro do tempo definido
