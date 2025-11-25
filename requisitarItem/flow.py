@@ -220,11 +220,11 @@ class RequisitarItem(BaseERP):
             self.esperar(.5)
 
             # clicando em confirmar baixa
-            # print("Clicando em confirmar baixa")
-            # self.sair_iframe()
-            # self.esperar(.5)
-            # self.clicar_v2(By.XPATH,'/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[1]', 5)
-            # self.esperar(.5)
+            print("Clicando em confirmar baixa")
+            self.sair_iframe()
+            self.esperar(.5)
+            self.clicar_v2(By.XPATH,'/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[1]', 5)
+            self.esperar(.5)
 
             self.iframes()
             self.esperar(.5)
