@@ -31,7 +31,7 @@ class BaseERP:
         """Pausa curta, útil após ações pesadas."""
         time.sleep(segundos)
 
-    def clicar(self, by, value, timeout=None):
+    def clicar_v1(self, by, value, timeout=None):
         if timeout is None:
             timeout = self.timeout
 
@@ -55,6 +55,58 @@ class BaseERP:
         except Exception as e:
             print(f"[FATAL] Erro inesperado ao clicar em {value}: {type(e).__name__} - {e}")
             return False
+
+    def clicar_v2(self, by, value, tentativas=20):
+
+        for tentativa in range(tentativas):
+
+            try:
+                # Sempre volta para o conteúdo principal
+                self.driver.switch_to.default_content()
+
+                # tenta clicar no contexto principal
+                elem = WebDriverWait(self.driver, 2).until(
+                    EC.element_to_be_clickable((by, value))
+                )
+                self.driver.execute_script("arguments[0].scrollIntoView(true);", elem)
+                elem.click()
+                print(f"[OK] Clique realizado em {value} na tentativa {tentativa+1}")
+                return True
+
+            except:
+                pass
+
+            # ✅ Se falhou, tentar nos iframes
+            iframes = self.driver.find_elements(By.TAG_NAME, "iframe")
+            for idx, frame in enumerate(iframes):
+
+                try:
+                    self.driver.switch_to.default_content()
+                    self.driver.switch_to.frame(frame)
+
+                    elem = WebDriverWait(self.driver, 2).until(
+                        EC.element_to_be_clickable((by, value))
+                    )
+
+                    self.driver.execute_script("arguments[0].scrollIntoView(true);", elem)
+
+                    try:
+                        elem.click()
+                    except:
+                        self.driver.execute_script("arguments[0].click();", elem)
+
+                    print(f"[OK] Clique realizado em {value} dentro do iframe {idx}")
+                    return True
+
+                except:
+                    continue
+
+            print(f"[INFO] Tentativa {tentativa+1}/{tentativas} falhou. Tentando novamente...")
+
+            self.esperar(1)
+
+        print(f"[ERRO] Não foi possível clicar em {value} após {tentativas} tentativas.")
+        return False
     
     def escrever(self, by, value, texto, limpar=True):
         try:
@@ -166,7 +218,7 @@ class BaseERP:
         :nav: webdriver
         """
 
-        self.clicar(By.CLASS_NAME, 'menuBar-button-label', 999)
+        self.clicar_v1(By.CLASS_NAME, 'menuBar-button-label', 999)
 
     def abrir_menu_2(self):
         
@@ -175,7 +227,7 @@ class BaseERP:
         :nav: webdriver
         """        
 
-        self.clicar(By.XPATH, '//*[@id="bt_1898143037"]/table/tbody/tr/td[2]', 999)
+        self.clicar_v1(By.XPATH, '//*[@id="bt_1898143037"]/table/tbody/tr/td[2]', 999)
 
     def tentar_abrir_2_menu(self):
         """
@@ -206,6 +258,8 @@ class BaseERP:
 
         try:
 
+            self.sair_iframe()
+
             lista_menu = self.driver.find_elements(By.CLASS_NAME, classe)
 
             elementos_menu = []
@@ -225,14 +279,6 @@ class BaseERP:
 
         return (lista_menu, test_lista)
 
-    def navegar_menu(self, *caminho):
-        for item in caminho:
-            if not self.clicar_no_menu(item):
-                print(f"[ERRO] Falha ao acessar menu: {item}")
-                return False
-            self.esperar(1)
-        return True
-    
     def clicar_menu(self, item_menu):
 
         try:
@@ -241,7 +287,7 @@ class BaseERP:
             self.esperar(1.5)
             click_producao = test_list.loc[test_list[0] == item_menu].reset_index(drop=True)['index'][0]
             lista_menu[click_producao].click()
-            self.esperar(.5)
+            self.esperar(1.5)
 
             print(f"[INFO] Clicado em {item_menu}")
 
@@ -278,7 +324,7 @@ class BaseERP:
 
             # Agora verifica se ainda existe uma aba aberta
             if not self.existe_aba_aberta(timeout=1):
-                print("[OK] Aba fechada com sucesso!")
+                print("[INFO] Nenhuma aba aberta")
                 return True
 
             self.esperar(0.5)

@@ -39,6 +39,7 @@ def main():
         fluxo.abrir_menu_2()
 
         fluxo.executar(rows)
+        # fluxo.executar2()
 
     else:
         return "[INFO] Nenhuma requisição pendente encontrada."

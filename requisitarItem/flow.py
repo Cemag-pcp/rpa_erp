@@ -29,29 +29,30 @@ class RequisitarItem(BaseERP):
 
             self.fechar_aba_ate_fechar()
 
-            self.esperar(2)
+            self.esperar(.5)
             self.abrir_menu_2()
 
-            self.esperar(2)
+            self.esperar(.5)
             self.clicar_menu('Requisições')
 
-            self.esperar(2)
+            self.esperar(.5)
             
             self.iframes()
-            
+
             #Mudando visualização
             print("Mudando visualização")
-            self.clicar(By.XPATH, '//*[@id="grdRequisicoes"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[1]', 5)
+            self.esperar(.5)
+            self.clicar_v2(By.XPATH, '//*[@id="grdRequisicoes"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[1]', 5)
             self.esperar(.5)
 
             #Clicando em insert
             print("Clicando em insert")
-            self.clicar(By.XPATH,'//*[@id="grdRequisicoes"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]', 5)
+            self.clicar_v2(By.XPATH,'//*[@id="grdRequisicoes"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]', 5)
             self.esperar(.5)
 
             #Inputando classe
             print("Escrevendo classe")
-            self.clicar(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[1]/td[4]/table/tbody/tr/td[1]', 5)
+            self.clicar_v2(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[1]/td[4]/table/tbody/tr/td[1]', 5)
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[1]/td[4]/table/tbody/tr/td[1]/input', tipo_requisicao)
             self.esperar(.5)
@@ -60,7 +61,7 @@ class RequisitarItem(BaseERP):
 
             #Inputando requisitante
             print("Escrevendo requisitante")
-            self.clicar(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]', 5)
+            self.clicar_v2(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]', 5)
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input', requisitante_matricula)
             self.esperar(.5)
@@ -83,7 +84,7 @@ class RequisitarItem(BaseERP):
             #Inputando ccusto
             print("Escrevendo ccusto")
             self.iframes()
-            self.clicar(By.XPATH, '//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[3]/td[4]/table/tbody/tr/td[1]', 5)
+            self.clicar_v2(By.XPATH, '//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[3]/td[4]/table/tbody/tr/td[1]', 5)
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[3]/td[4]/table/tbody/tr/td[1]/input', ccusto_text)
             self.esperar(.5)
@@ -106,7 +107,7 @@ class RequisitarItem(BaseERP):
             #Inputando recurso
             print("Escrevendo recurso")
             self.iframes()
-            self.clicar(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]', 5)
+            self.clicar_v2(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]', 5)
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]/input', rec)
             self.esperar(.5)
@@ -128,7 +129,7 @@ class RequisitarItem(BaseERP):
             #Inputando quantidade
             print("Escrevendo quantidade")
             self.iframes()
-            self.clicar(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[7]/td[3]/table/tbody/tr/td[1]', 5)
+            self.clicar_v2(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[7]/td[3]/table/tbody/tr/td[1]', 5)
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[7]/td[3]/table/tbody/tr/td[1]/input', qtd)
             self.esperar(.5)
@@ -137,7 +138,7 @@ class RequisitarItem(BaseERP):
 
             #inputando Observação
             print("Escrevendo observação")
-            self.clicar(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[9]/td[2]/table/tbody/tr/td[1]/textarea', 5)
+            self.clicar_v2(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[9]/td[2]/table/tbody/tr/td[1]/textarea', 5)
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[9]/td[2]/table/tbody/tr/td[1]/textarea', observacao_text)
             self.esperar(.5)
@@ -146,22 +147,22 @@ class RequisitarItem(BaseERP):
 
             #Clicando em confirmar (insert)
             print("Clicando em insert")
-            self.clicar(By.XPATH,'//*[@id="grdRequisicoes"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]', 5)
+            self.clicar_v2(By.XPATH,'//*[@id="grdRequisicoes"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[4]', 5)
             self.esperar(.5)
 
             # mudar visualização
             print("Mudando visualização")
-            self.clicar(By.XPATH, '//*[@id="grdRequisicoes"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[1]', 5)
+            self.clicar_v2(By.XPATH, '//*[@id="grdRequisicoes"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[1]', 5)
             self.esperar(1.5)
             
             # selecionando checkbox
             print("Selecionando checkbox")
-            self.clicar(By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[4]/td[1]', 5)
+            self.clicar_v2(By.XPATH, '/html/body/table/tbody/tr[1]/td/div/form/table/tbody/tr[1]/td[1]/table/tbody/tr[4]/td[1]', 5)
             self.esperar(.5)
 
             # clicando em aprovar
             print("Clicando em aprovar")
-            self.clicar(By.XPATH, '//*[@id="buttonsBar_grdRequisicoes"]/td[1]', 5)
+            self.clicar_v2(By.XPATH, '//*[@id="buttonsBar_grdRequisicoes"]/td[1]', 5)
             self.esperar(.5)
 
             #Aguardar erro
@@ -186,32 +187,32 @@ class RequisitarItem(BaseERP):
             # clicando em baixar
             print("Clicando em baixar")
             self.iframes()
-            self.clicar(By.XPATH,'//*[@id="buttonsBar_grdRequisicoes"]/td[3]', 5)
+            self.clicar_v2(By.XPATH,'//*[@id="buttonsBar_grdRequisicoes"]/td[3]', 5)
             self.esperar(.5)
 
             # preenchendo classe movimentação de depósito
             print("Escrevendo classe movimentação de depósito")
-            self.clicar(By.XPATH,'//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td[1]', 5)
+            self.clicar_v2(By.XPATH,'//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td[1]', 5)
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td[1]/input', 'Movimentação de depósitos')
             self.esperar(.5)
             # self.verificar_se_escreveu(By.XPATH, '//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td[1]/input', 'Movimentação de depósitos')
             self.esperar(.5)
-            self.clicar(By.XPATH,'//*[@id="1"]', 5)
+            self.clicar_v2(By.XPATH,'//*[@id="1"]', 5)
             self.esperar(.5)
-            self.clicar(By.XPATH,'//*[@id="buttonsBar_grLookup"]/td[1]', 5)
+            self.clicar_v2(By.XPATH,'//*[@id="buttonsBar_grLookup"]/td[1]', 5)
             self.esperar(.5)
 
             # Preenchendo depósito
             print("Escrevendo depósito")
-            self.clicar(By.XPATH,'//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]', 5)
+            self.clicar_v2(By.XPATH,'//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]', 5)
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input', 'central')
             self.esperar(.5)
 
             # Preenchendo data de movimentação
             print("Escrevendo data de movimentação")
-            self.clicar(By.XPATH,'//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]', 5)
+            self.clicar_v2(By.XPATH,'//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]', 5)
             self.esperar(.5)
             self.escrever(By.XPATH,'//*[@id="grdInfoBaixa"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[5]/td[2]/table/tbody/tr/td[1]/input', datetime.datetime.now().date().strftime('%d/%m/%Y'))
             self.esperar(.5)
@@ -219,29 +220,29 @@ class RequisitarItem(BaseERP):
             self.esperar(.5)
 
             # clicando em confirmar baixa
-            print("Clicando em confirmar baixa")
-            self.sair_iframe()
-            self.esperar(.5)
-            self.clicar(By.XPATH,'/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[1]', 5)
-            self.esperar(.5)
+            # print("Clicando em confirmar baixa")
+            # self.sair_iframe()
+            # self.esperar(.5)
+            # self.clicar_v2(By.XPATH,'/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[1]', 5)
+            # self.esperar(.5)
 
             self.iframes()
             self.esperar(.5)
 
             # clicar em confirmar    
             print("Confirmando em confirmar")
-            self.clicar(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[10]/td[7]/div', 5)
+            self.clicar_v2(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[10]/td[7]/div', 5)
             self.esperar(.5)
 
             # clicando em gravar
             print("Clicando em gravar")
             self.sair_iframe()
-            self.clicar(By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]', 5)
+            self.clicar_v2(By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]', 5)
             self.esperar(.5)
 
             # confirmar_gravacao
             print("Clicando em confirmar gravação")
-            self.clicar(By.XPATH, '//*[@id="answers_0"]', 5)
+            self.clicar_v2(By.XPATH, '//*[@id="answers_0"]', 5)
             self.esperar(.5)
 
             print("Aguardando erro")
