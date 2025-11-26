@@ -3,15 +3,15 @@ import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-from requisitarItem.requisicoes import verificar_requisicoes
-from requisitarItem.flow import RequisitarItem
+from transferirItem.transferencias import verificar_transferencias
+from transferirItem.flow import TransferirItem
 
 
 def main():
-    rows = verificar_requisicoes()
+    rows = verificar_transferencias()
 
     if rows:
-        print(f"Encontradas {len(rows)} requisições a serem processadas.")
+        print(f"Encontradas {len(rows)} transferências a serem processadas.")
 
         driver = webdriver.Chrome()
 
@@ -29,21 +29,23 @@ def main():
             # Se não conseguir registrar, apenas segue a execução normal
             pass
 
-        fluxo = RequisitarItem(driver)
+        fluxo = TransferirItem(driver)
 
         try:
-            fluxo.abrir_url_140()
-            fluxo.login("user_almox", "samuel05")
+            # fluxo.abrir_url_140()
+            fluxo.abrir_url_testes()
+            
+            fluxo.login("luan araujo", "luanaraujo7")
             fluxo.esperar(5)
 
             # abre menu
-            fluxo.abrir_menu_2()
+            fluxo.abrir_menu_1()
 
             fluxo.clicar_menu("Estoque")
-            fluxo.clicar_menu("Requisição")
+            fluxo.clicar_menu("Transferência")
 
             # fecha menu
-            fluxo.abrir_menu_2()
+            fluxo.abrir_menu_1()
 
             fluxo.executar(rows)
             # fluxo.executar2()
@@ -53,7 +55,7 @@ def main():
             except Exception:
                 pass
     else:
-        return "[INFO] Nenhuma requisição pendente encontrada."
+        return "[INFO] Nenhuma transferência pendente encontrada."
 
 
 if __name__ == "__main__":

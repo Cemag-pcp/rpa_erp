@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Painel de Bots · ERP{% endblock %}
+
+{% block content %}
+    <section class="panel">
+        <div class="panel__header">
+            <h2 class="panel__title">Bots configurados</h2>
+            <button class="button button--secondary" id="refresh-button">Atualizar</button>
+        </div>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Bot</th>
+                <th>Status</th>
+                <th>Último início</th>
+                <th>Última parada</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody id="bots-body">
+            </tbody>
+        </table>
+    </section>
+
+    <section class="panel panel--logs">
+        <div class="panel__header">
+            <h2 class="panel__title">Logs recentes</h2>
+            <button class="button button--secondary" id="refresh-logs-button">Atualizar logs</button>
+        </div>
+        <pre id="logs-container" class="logs"></pre>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    <script src="/static/js/bots.js"></script>
+{% endblock %}

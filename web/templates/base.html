@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Plataforma de Bots ERP{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <header class="header">
+        <h1 class="header__title">Plataforma de Bots ERP</h1>
+        <p class="header__subtitle">Console local de automações do ERP</p>
+    </header>
+
+    <main class="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <span>v1.0.0</span>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
+
