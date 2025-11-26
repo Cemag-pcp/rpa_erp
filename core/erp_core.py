@@ -1,3 +1,4 @@
+import os
 import time
 import logging
 import functools
@@ -525,3 +526,20 @@ class BaseERP:
             # Não apareceu mensagem de alerta dentro do tempo definido
             log.info("Não apareceu mensagem de alerta dentro do tempo definido")
             return None
+
+
+    def aguardando_aparecer_item(self, by, value):
+
+        log.info("Aguardando modal para confimar")
+
+        self.sair_iframe()
+        # Carregando até aparecer o MODAL para CONFIRMAR
+        while True:
+            elements = self.driver.find_elements(by, value)
+            if len(elements) >= 1:
+                break
+            else:
+                log.info("Carregando...")
+                self.esperar(1)  # Esperar 1 segundo antes de verificar novamente
+        
+        return log.info('Item na tela')
