@@ -1,17 +1,76 @@
 import time
+import logging
+import functools
+from datetime import datetime
+import pandas as pd
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import (
     TimeoutException,
     NoSuchElementException,
     ElementClickInterceptedException,
 )
-from selenium.webdriver.common.keys import Keys
 
-import pandas as pd
-from datetime import datetime
+# =============================
+# 1. CONFIGURAÇÃO DE LOGS
+# =============================
+def configurar_logger():
+    """
+    Configura o logger para salvar em arquivo e mostrar no console.
+    """
+    logger = logging.getLogger("ERP_Automacao")
+    logger.setLevel(logging.INFO)
+
+    # Evita duplicidade de logs se reinicializar
+    if not logger.handlers:
+        # Formato: [DATA HORA] [NIVEL] - MENSAGEM
+        formatter = logging.Formatter('%(asctime)s [%(levelname)s] - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+        # Handler Arquivo (salva o histórico)
+        file_handler = logging.FileHandler('execucao_erp.log', encoding='utf-8')
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+
+        # Handler Console (mostra na tela em tempo real)
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
+
+    return logger
+
+# Instância global do logger para ser usada no arquivo
+log = configurar_logger()
+
+# =============================
+# 2. DECORATOR PARA RASTREAR PASSOS
+# =============================
+def log_passo(func):
+    """
+    Decorator que loga automaticamente o início, fim e erros de cada função.
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        nome_funcao = func.__name__
+        try:
+            # Log antes de executar
+            # args[0] é o 'self', ignoramos para limpar o log
+            log.info(f"Iniciando passo: {nome_funcao}")
+            
+            resultado = func(*args, **kwargs)
+            
+            # Log após sucesso
+            log.info(f"Passo concluído: {nome_funcao}")
+            return resultado
+
+        except Exception as e:
+            # Log de erro com traceback se quebrar
+            log.error(f"Falha no passo {nome_funcao}. Erro: {str(e)}", exc_info=True)
+            raise e # Relança o erro para o script principal tratar se necessário
+    return wrapper
 
 class BaseERP:
     """
@@ -22,7 +81,8 @@ class BaseERP:
     def __init__(self, driver, timeout=20):
         self.driver = driver
         self.wait = WebDriverWait(driver, timeout)
-
+        self.timeout = timeout
+        log.info("Instância BaseERP iniciada.")
     # =============================
     # UTILITÁRIOS GERAIS
     # =============================
@@ -30,7 +90,8 @@ class BaseERP:
     def esperar(self, segundos):
         """Pausa curta, útil após ações pesadas."""
         time.sleep(segundos)
-
+    
+    @log_passo
     def clicar_v1(self, by, value, timeout=None):
         if timeout is None:
             timeout = self.timeout
@@ -45,17 +106,18 @@ class BaseERP:
             return True
 
         except TimeoutException:
-            print(f"[ERRO] Timeout ao tentar clicar: {value}")
+            log.warning(f"Timeout ao tentar clicar: {value}")
             return False
 
         except ElementClickInterceptedException:
-            print(f"[ERRO] Elemento interceptado ao clicar: {value}")
+            log.warning(f"Elemento interceptado ao clicar: {value}")
             return False
 
         except Exception as e:
-            print(f"[FATAL] Erro inesperado ao clicar em {value}: {type(e).__name__} - {e}")
+            log.critical(f"Erro inesperado ao clicar em {value}: {type(e).__name__} - {e}")
             return False
 
+    @log_passo
     def clicar_v2(self, by, value, tentativas=20):
 
         for tentativa in range(tentativas):
@@ -70,13 +132,13 @@ class BaseERP:
                 )
                 self.driver.execute_script("arguments[0].scrollIntoView(true);", elem)
                 elem.click()
-                print(f"[OK] Clique realizado em {value} na tentativa {tentativa+1}")
+                log.info(f"Clique realizado em {value} na tentativa {tentativa+1}")
                 return True
 
             except:
                 pass
 
-            # ✅ Se falhou, tentar nos iframes
+            # Se falhou, tentar nos iframes
             iframes = self.driver.find_elements(By.TAG_NAME, "iframe")
             for idx, frame in enumerate(iframes):
 
@@ -95,37 +157,39 @@ class BaseERP:
                     except:
                         self.driver.execute_script("arguments[0].click();", elem)
 
-                    print(f"[OK] Clique realizado em {value} dentro do iframe {idx}")
+                    log.info(f"Clique realizado em {value} dentro do iframe {idx}")
                     return True
 
                 except:
                     continue
 
-            print(f"[INFO] Tentativa {tentativa+1}/{tentativas} falhou. Tentando novamente...")
+            log.debug(f"Tentativa {tentativa+1}/{tentativas} falhou. Tentando novamente...")
 
             self.esperar(1)
 
-        print(f"[ERRO] Não foi possível clicar em {value} após {tentativas} tentativas.")
+        log.error(f"Não foi possível clicar em {value} após {tentativas} tentativas.")
         return False
     
+    @log_passo
     def escrever(self, by, value, texto, limpar=True):
         try:
             elem = self.wait.until(EC.presence_of_element_located((by, value)))
             if limpar:
                 elem.clear()
                 self.esperar(1.5)
-                print('[INFO] Limpando antes de escrever')
+                log.debug('Limpando antes de escrever')
             elem.send_keys(texto)
             self.esperar(.5)
             elem.send_keys(Keys.TAB)
-            print(f'[INFO] Escrito {value}')
+            log.info(f'Escrito: {texto} em {value}')
             
             return True
         except TimeoutException:
-            print(f"[ERRO] Não encontrou campo: {value}")
+            log.error(f"Não encontrou campo para escrever: {value}")
             
             return False
-
+    
+    @log_passo
     def verificar_se_escreveu(self, by, value, texto, limpar=True, tentativas=2):
         """
         Verifica se o input está preenchido.
@@ -146,7 +210,7 @@ class BaseERP:
         try:
             elem = self.wait.until(EC.presence_of_element_located((by, value)))
         except TimeoutException:
-            print(f"[ERRO] Não encontrou campo: {value}")
+            log.error(f"Não encontrou campo: {value}")
             return False
 
         for tentativa in range(1, tentativas + 1):
@@ -154,11 +218,11 @@ class BaseERP:
             valor_atual = (elem.get_attribute("value") or "").strip()
 
             if valor_atual:
-                print(f"[INFO] Campo {value} já está preenchido com: '{valor_atual}'")
+                log.info(f"Campo {value} já preenchido: '{valor_atual}'")
                 return True
 
             # 2) Se estiver vazio, tenta escrever
-            print(f"[INFO] Campo {value} está vazio. Tentando escrever (tentativa {tentativa}/{tentativas})...")
+            log.info(f"Campo {value} vazio. Tentando escrever (tentativa {tentativa}/{tentativas})...")     
 
             if limpar:
                 elem.clear()
@@ -174,12 +238,12 @@ class BaseERP:
             valor_atual = (elem.get_attribute("value") or "").strip()
 
             if valor_atual:
-                print(f"[INFO] Campo {value} preenchido com sucesso: '{valor_atual}'")
+                log.info(f"Campo {value} preenchido com sucesso: '{valor_atual}'")
                 return True
             else:
-                print(f"[ALERTA] Campo {value} ainda está vazio após tentativa {tentativa}")
+                log.warning(f"Campo {value} ainda vazio após tentativa {tentativa}")
 
-        print(f"[ERRO] Não foi possível preencher o campo {value} após {tentativas} tentativas.")
+        log.error(f"Falha ao preencher campo {value} após {tentativas} tentativas.")
         return False
 
     # =============================
@@ -229,6 +293,7 @@ class BaseERP:
 
         self.clicar_v1(By.XPATH, '//*[@id="bt_1898143037"]/table/tbody/tr/td[2]', 999)
 
+    @log_passo
     def tentar_abrir_2_menu(self):
         """
         Tenta abrir o menu do Innovaro automaticamente.
@@ -244,16 +309,17 @@ class BaseERP:
         self.driver.switch_to.default_content()
 
         if self.abrir_menu_1():
-            print("[INFO] Menu Innovaro tipo 1 aberto.")
+            log.info("Menu Innovaro tipo 1 aberto.")
             return 1
 
         if self.abrir_menu_2():
-            print("[INFO] Menu Innovaro tipo 2 aberto.")
+            log.info("Menu Innovaro tipo 2 aberto.")
             return 2
 
-        print("[ERRO] Nenhum menu do Innovaro foi encontrado.")
+        log.error("Nenhum menu do Innovaro foi encontrado.")
         return None
 
+    @log_passo
     def listar_itens_menu(self, classe):
 
         try:
@@ -271,14 +337,15 @@ class BaseERP:
             test_lista = pd.DataFrame(elementos_menu)
             test_lista = test_lista.loc[test_lista[0] != ""].reset_index()
 
-            print(f"[INFO] Listou as opções do menu")
+            log.info("Listou as opções do menu")
             self.esperar(.5)
 
         except Exception as e:
-            print(f"[ERRO] Ocorreu um erro durante a listagem de opções: {e}")
+            log.error(f"Ocorreu um erro durante a listagem de opções: {e}")
 
         return (lista_menu, test_lista)
-
+    
+    @log_passo
     def clicar_menu(self, item_menu):
 
         try:
@@ -289,16 +356,17 @@ class BaseERP:
             lista_menu[click_producao].click()
             self.esperar(1.5)
 
-            print(f"[INFO] Clicado em {item_menu}")
+            log.info(f"Clicado em {item_menu}")
 
             return True
         except ValueError as e:
-            print(f"[ERRO] Não encontrado {item_menu}: {e}")
+            log.error(f"Não encontrado {item_menu}: {e}")
 
     # =============================
     # CONTROLE DE ABAS
     # =============================
-
+    
+    @log_passo
     def fechar_aba_ate_fechar(self, max_tentativas=5):
         """
         Tenta fechar a aba atual repetidamente até realmente fechar.
@@ -306,7 +374,7 @@ class BaseERP:
         """
 
         for tentativa in range(1, max_tentativas + 1):
-            print(f"[INFO] Tentando fechar aba (tentativa {tentativa}/{max_tentativas})")
+            log.info(f"Tentando fechar aba (tentativa {tentativa}/{max_tentativas})")
 
             try:
                 # Tenta clicar no botão de fechar
@@ -320,18 +388,19 @@ class BaseERP:
                 btn_fechar.click()
 
             except Exception as e:
-                print(f"[WARN] Não conseguiu clicar no botão de fechar: {e}")
+                log.error(f"Não conseguiu clicar no botão de fechar: {e}")
 
             # Agora verifica se ainda existe uma aba aberta
             if not self.existe_aba_aberta(timeout=1):
-                print("[INFO] Nenhuma aba aberta")
+                log.info("Nenhuma aba aberta")
                 return True
 
             self.esperar(0.5)
 
-        print("[ERRO] Não foi possível fechar a aba após várias tentativas.")
+        log.error("Não foi possível fechar a aba após várias tentativas.")
         return False
 
+    @log_passo
     def existe_aba_aberta(self, timeout):
         """
         Verifica se existe pelo menos uma aba aberta no Innovaro.
@@ -352,6 +421,7 @@ class BaseERP:
         except TimeoutException:
             return False
 
+    @log_passo
     def fechar_todas_as_abas(self):
         while self.existe_aba_aberta(timeout=1):
             self.fechar_aba_ate_fechar()
@@ -360,6 +430,7 @@ class BaseERP:
     # AÇÕES COMUNS DO ERP
     # =============================
 
+    @log_passo
     def iframes(self):
 
         iframe_list = self.driver.find_elements(By.CLASS_NAME, 'tab-frame')
@@ -372,14 +443,16 @@ class BaseERP:
             except:
                 pass
                 
-        return '[INFO] Entrando no iframe'
-
+        return log.info('Entrando no iframe')
+    
+    @log_passo
     def sair_iframe(self):
 
         self.driver.switch_to.default_content()
 
-        return '[INFO] Saindo do iframe'
+        return log.info('Saindo do iframe')
     
+    @log_passo
     def obter_mensagem_erro(self, timeout=5, fechar_apos_ler=True):
         """
         Captura a mensagem da janela de erro (errorMessageBox).
@@ -399,7 +472,7 @@ class BaseERP:
             msg_elem = box.find_element(By.CSS_SELECTOR, ".dialog-content div")
             mensagem = msg_elem.text.strip()
 
-            print(f"[ERRO] Mensagem de erro capturada: {mensagem}")
+            log.info(f"Mensagem de erro capturada: {mensagem}")
 
             # Opcional: clicar no OK para fechar
             if fechar_apos_ler:
@@ -407,14 +480,16 @@ class BaseERP:
                     btn_ok = box.find_element(By.ID, "confirm")
                     btn_ok.click()
                 except Exception as e:
-                    print(f"[WARN] Não consegui clicar em OK do erro: {e}")
+                    log.error(f"Não consegui clicar em OK do erro: {e}")
 
             return mensagem + " - " + datetime.now().strftime("%d/%m/%Y %H:%M")
 
         except TimeoutException:
             # Não apareceu mensagem de erro dentro do tempo definido
+            log.info(f"Não mostrou nenhuma mensagem de erro")
             return None
-
+    
+    @log_passo
     def obter_mensagem_alert(self, timeout=5, fechar_apos_ler=True):
         """
         Captura a mensagem da janela de alerta (alertMessageBox).
@@ -434,7 +509,7 @@ class BaseERP:
             msg_elem = box.find_element(By.CSS_SELECTOR, ".dialog-content div")
             mensagem = msg_elem.text.strip()
 
-            print(f"[ALERTA] Mensagem de alerta capturada: {mensagem}")
+            log.info(f"Mensagem de alerta capturada: {mensagem}")
 
             # Opcional: clicar no OK para fechar
             if fechar_apos_ler:
@@ -442,10 +517,11 @@ class BaseERP:
                     btn_ok = box.find_element(By.ID, "confirm")
                     btn_ok.click()
                 except Exception as e:
-                    print(f"[WARN] Não consegui clicar em OK do alerta: {e}")
+                    log.error(f"Não consegui clicar em OK do alerta: {e}")
 
             return mensagem
 
         except TimeoutException:
             # Não apareceu mensagem de alerta dentro do tempo definido
+            log.info("Não apareceu mensagem de alerta dentro do tempo definido")
             return None
