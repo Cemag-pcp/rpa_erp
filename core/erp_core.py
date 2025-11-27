@@ -527,7 +527,7 @@ class BaseERP:
             log.info("Não apareceu mensagem de alerta dentro do tempo definido")
             return None
 
-
+    @log_passo
     def aguardando_aparecer_item(self, by, value):
 
         log.info("Aguardando modal para confimar")
@@ -543,3 +543,22 @@ class BaseERP:
                 self.esperar(1)  # Esperar 1 segundo antes de verificar novamente
         
         return log.info('Item na tela')
+
+    @log_passo
+    def aguardando_desaparecer_item(self, by, value):
+
+        log.info("Aguardando item desaparecer da tela")
+
+        loading = WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable(
+            (by, value)))
+
+        while loading:
+            
+            log.info("carregando...")            
+            
+            try:
+                loading = WebDriverWait(self.driver, 1).until(EC.element_to_be_clickable(
+                    (by, value)))
+            except:
+                loading = None
+                break
