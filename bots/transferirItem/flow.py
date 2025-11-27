@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 
 from core.erp_core import BaseERP
-from transferirItem.transferencias import enviar_status_via_api
+from bots.transferirItem.transferencias import enviar_status_via_api
 
 import datetime
 
@@ -206,5 +206,14 @@ class TransferirItem(BaseERP):
             if alerta:
                 print(f"[ALERTA] Apenas um alerta: {alerta}")
 
-            print("Sucesso")
+            # Se chegou até aqui então funcionou!!!
+            enviar_status_via_api(
+                transferencia_id=id,
+                status='OK',
+                dep_destino=dep_destino,
+                rec=rec,
+                qtd=qtd,
+                observacao=observacao_text
+            )
+
             
