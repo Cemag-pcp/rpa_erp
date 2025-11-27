@@ -2,18 +2,28 @@ import os
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 
-from transferirItem.transferencias import verificar_transferencias
-from transferirItem.flow import TransferirItem
+from bots.requisitarItem.requisicoes import verificar_requisicoes
+from bots.requisitarItem.flow import RequisitarItem
+from core.db import get_erp_credentials_for_bot, get_headless_mode_for_bot
 
 
 def main():
-    rows = verificar_transferencias()
+
+    name_bot = 'requisitar_item'
+
+    rows = verificar_requisicoes()
 
     if rows:
-        print(f"Encontradas {len(rows)} transferências a serem processadas.")
+        print(f"Encontradas {len(rows)} requisições a serem processadas.")
 
-        driver = webdriver.Chrome()
+        headless = get_headless_mode_for_bot(name_bot)
+        options = Options()
+        if headless:
+            options.add_argument("--headless=new")
+
+        driver = webdriver.Chrome(options=options)
 
         # Registra o PID do chromedriver em arquivo para o gerenciador poder encerrar apenas este navegador
         pid_file = os.getenv("BOT_PID_FILE")
@@ -29,36 +39,37 @@ def main():
             # Se não conseguir registrar, apenas segue a execução normal
             pass
 
-        fluxo = TransferirItem(driver)
+        fluxo = RequisitarItem(driver)
 
         try:
-            # fluxo.abrir_url_140()
-            fluxo.abrir_url_testes()
-            
-            fluxo.login("luan araujo", "luanaraujo7")
+            fluxo.abrir_url_140()
+
+            creds = get_erp_credentials_for_bot(name_bot)
+            login = creds.get("erp_username")
+            senha = creds.get("erp_password")
+
+            fluxo.login(login, senha)
             fluxo.esperar(5)
 
             # abre menu
-            fluxo.abrir_menu_1()
+            fluxo.abrir_menu_2()
 
             fluxo.clicar_menu("Estoque")
-            fluxo.clicar_menu("Transferência")
+            fluxo.clicar_menu("Requisição")
 
             # fecha menu
-            fluxo.abrir_menu_1()
+            fluxo.abrir_menu_2()
 
             fluxo.executar(rows)
-            # fluxo.executar2()
         finally:
             try:
                 driver.quit()
             except Exception:
                 pass
     else:
-        return "[INFO] Nenhuma transferência pendente encontrada."
+        return "[INFO] Nenhuma requisição pendente encontrada."
 
 
 if __name__ == "__main__":
-    while True:
-        main()
+    main()
 

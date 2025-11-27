@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 
 from core.erp_core import BaseERP
-from requisitarItem.requisicoes import enviar_status_via_api
+from bots.requisitarItem.requisicoes import enviar_status_via_api
 
 import datetime
 
@@ -201,6 +201,16 @@ class RequisitarItem(BaseERP):
             self.clicar_v2(By.XPATH,'//*[@id="1"]', 5)
             self.esperar(.5)
             self.clicar_v2(By.XPATH,'//*[@id="buttonsBar_grLookup"]/td[1]', 5)
+            self.esperar(.5)
+            print("Aguardando erro")
+            erro = self.obter_mensagem_erro()
+            if erro:
+                print(f"[ERRO] Pulando item devido ao erro: {erro}")
+                self.esperar(.5)
+                self.fechar_aba_ate_fechar()
+                # devolve erro pro banco
+                enviar_status_via_api(id,erro,tipo_requisicao)
+                continue
             self.esperar(.5)
 
             # Preenchendo depósito
