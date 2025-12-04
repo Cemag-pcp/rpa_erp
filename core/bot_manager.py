@@ -401,13 +401,17 @@ _BOTS: Dict[str, BotProcess] = {
         name="transferir_item",
         command=[sys.executable, "-m", "bots.transferirItem.main"],
     ),
-    "bot_test_schedule": BotProcess(
-        name="bot_test_schedule",
+    "bot_test_desmanche": BotProcess(
+        name="bot_test_desmanche",
         command=[sys.executable, "-m", "bots.bot_test.main"],
     ),
     "saldo_ao_vivo": BotProcess(
         name="saldo_ao_vivo",
         command=[sys.executable, "-m", "bots.saldoAoVivo.main"],
+    ),
+    "desmanchar_item": BotProcess(
+        name="desmanchar_item",
+        command=[sys.executable, "-m", "bots.desmancharItem.main"],
     ),
 
 }

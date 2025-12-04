@@ -41,7 +41,7 @@ def verificar_requisicoes():
             WHERE
                 sr.data_entrega IS NOT NULL
                 AND (sr.rpa IS NULL OR sr.rpa != 'OK')
-                AND data_solicitacao >= date_trunc('month', CURRENT_DATE)
+                -- AND data_solicitacao >= date_trunc('month', CURRENT_DATE)
             ORDER BY
                 sr.data_solicitacao;
         """
@@ -73,7 +73,7 @@ def enviar_status_via_api(requisicao_id, status, tipo_requisicao):
     """
     # --- Configuração da API ---
     DJANGO_API_URL = "https://apontamentousinagem.onrender.com/core/api/rpa/update-status/"
-    RPA_API_KEY = os.getenv("RPA_API_KEY")
+    # RPA_API_KEY = os.getenv("RPA_API_KEY", "dfjf6348964jgjdofj58690yfndjwe395igjd032054kghbdpgçblej389503k2quf78rj5iy90gkmnj4u8rjfksk")
     # ---------------------------
 
     payload = {
@@ -81,13 +81,13 @@ def enviar_status_via_api(requisicao_id, status, tipo_requisicao):
         "status": status,
         "tipo_requisicao": tipo_requisicao,
     }
-    headers = {
-        "Content-Type": "application/json",
-        "X-API-KEY": RPA_API_KEY,
-    }
+    # headers = {
+    #     "Content-Type": "application/json",
+    #     "X-API-KEY": RPA_API_KEY,
+    # }
 
     try:
-        response = requests.post(DJANGO_API_URL, data=json.dumps(payload), headers=headers, timeout=20)
+        response = requests.post(DJANGO_API_URL, data=json.dumps(payload), timeout=20)
         if response.status_code == 200:
             print(f"➜ API: Status da requisição {requisicao_id} enviado com sucesso.")
             return True
