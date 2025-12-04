@@ -1,8 +1,8 @@
 import os
 import json
+
 import requests
 from psycopg2.extras import DictCursor  # Para retornar resultados como dicionários
-from dotenv import load_dotenv
 
 from core.db import get_db_connection
 
@@ -66,7 +66,7 @@ def enviar_status_via_api(transferencia_id, status, dep_destino, rec, qtd, obser
     """
     # --- Configuração da API ---
     DJANGO_API_URL = "https://apontamentousinagem.onrender.com/core/api/rpa/update-transfer/"
-    # RPA_API_KEY = os.getenv("RPA_API_KEY")
+    # RPA_API_KEY = "dfjf6348964jgjdofj58690yfndjwe395igjd032054kghbdpg��blej389503k2quf78rj5iy90gkmnj4u8rjfksk"
     # ---------------------------
 
     payload = {
