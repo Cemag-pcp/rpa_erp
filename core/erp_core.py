@@ -247,6 +247,15 @@ class BaseERP:
         log.error(f"Falha ao preencher campo {value} após {tentativas} tentativas.")
         return False
 
+    @log_passo
+    def buscar_valor(self, by, value):
+
+        valor_buscado = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((by, value))
+        ).get_attribute("value")
+
+        return valor_buscado
+
     # =============================
     # INICIALIZAR ERP
     # =============================

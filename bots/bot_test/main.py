@@ -2,13 +2,13 @@ import os
 
 from selenium import webdriver
 
-from .flow import TransferirItem
+from .flow import DesmancharItem
 from core.db import get_erp_credentials_for_bot
 
 
 def main():
 
-    name_bot = 'bot_test_schedule'
+    name_bot = 'bot_test_desmanche'
 
     driver = webdriver.Chrome()
 
@@ -25,19 +25,24 @@ def main():
     except Exception:
         # Se não conseguir registrar, apenas segue a execução normal
         pass
-
-    fluxo = TransferirItem(driver)
+    
+    fluxo = DesmancharItem(driver)
 
     try:
         # fluxo.abrir_url_140()
         fluxo.abrir_url_testes()
 
-        creds = get_erp_credentials_for_bot(name_bot)
-        login = creds.get("erp_username")
-        senha = creds.get("erp_password")
+        # creds = get_erp_credentials_for_bot(name_bot)
+        # login = creds.get("erp_username")
+        # senha = creds.get("erp_password")
+
+        login = 'luan araujo'
+        senha = 'luanaraujo7'
 
         fluxo.login(login, senha)
         fluxo.esperar(5)
+
+        fluxo.executar()
 
         driver.quit()
 

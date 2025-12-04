@@ -66,7 +66,7 @@ def enviar_status_via_api(transferencia_id, status, dep_destino, rec, qtd, obser
     """
     # --- Configuração da API ---
     DJANGO_API_URL = "https://apontamentousinagem.onrender.com/core/api/rpa/update-transfer/"
-    RPA_API_KEY = os.getenv("RPA_API_KEY")
+    # RPA_API_KEY = os.getenv("RPA_API_KEY")
     # ---------------------------
 
     payload = {
@@ -79,7 +79,7 @@ def enviar_status_via_api(transferencia_id, status, dep_destino, rec, qtd, obser
     }
     headers = {
         "Content-Type": "application/json",
-        "X-API-KEY": RPA_API_KEY,
+        # "X-API-KEY": RPA_API_KEY,
     }
 
     try:
