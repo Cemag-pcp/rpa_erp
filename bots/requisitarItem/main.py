@@ -13,9 +13,10 @@ def main():
 
     name_bot = 'requisitar_item'
 
-    rows = verificar_requisicoes()  
 
     while True:
+        
+        rows = verificar_requisicoes()  
     
         try:
 
