@@ -13,7 +13,6 @@ def main():
 
     name_bot = 'requisitar_item'
 
-
     while True:
         
         rows = verificar_requisicoes()  
