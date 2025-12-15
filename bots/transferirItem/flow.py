@@ -166,8 +166,8 @@ class TransferirItem(BaseERP):
             self.clicar_v2(By.XPATH, '//*[@id="buttonsBar_solicitacoes"]/td[3]')
             self.esperar(1.5)
 
-            # print("Confirmando baixa")
-            # self.clicar_v2(By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td')
+            print("Confirmando baixa")
+            self.clicar_v2(By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td')
             erro = self.obter_mensagem_erro()
             if erro:
                 print(f"[ERRO] Pulando item devido ao erro: {erro}")
