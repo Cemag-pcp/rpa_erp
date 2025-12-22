@@ -2,7 +2,7 @@
 Type=Application
 Name=RPA Innovaro
 Comment=Atualiza e inicia o app principal
-Exec=/bin/bash -lc '\"$(dirname \"%k\")/start_app.sh\"'
+Exec=/bin/bash -lc 'cd "$(dirname "%k")" && ./start_app.sh'
 Icon=utilities-terminal
 Terminal=true
 Categories=Development;
