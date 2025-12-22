@@ -191,7 +191,7 @@ class TransferirItem(BaseERP):
                 self.fechar_aba_ate_fechar()
                 enviar_status_via_api(
                     transferencia_id=id,
-                    status=erro,
+                    status=alerta,
                     dep_destino=dep_destino,
                     rec=rec,
                     qtd=qtd,
