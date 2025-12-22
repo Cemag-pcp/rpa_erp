@@ -44,8 +44,8 @@ def main():
             fluxo = TransferirItem(driver)
 
             try:
-                # fluxo.abrir_url_140()
-                fluxo.abrir_url_testes()
+                fluxo.abrir_url_140()
+                # fluxo.abrir_url_testes()
 
                 creds = get_erp_credentials_for_bot(name_bot)
                 login = creds.get("erp_username")
