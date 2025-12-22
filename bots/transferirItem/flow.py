@@ -187,7 +187,17 @@ class TransferirItem(BaseERP):
             print("Aguardando alerta")
             alerta = self.obter_mensagem_alert()
             if alerta:
-                print(f"[ALERTA] Apenas um alerta: {alerta}")
+                print(f"[ERRO] Pulando item devido ao erro: {alerta}")
+                self.fechar_aba_ate_fechar()
+                enviar_status_via_api(
+                    transferencia_id=id,
+                    status=erro,
+                    dep_destino=dep_destino,
+                    rec=rec,
+                    qtd=qtd,
+                    observacao=observacao_text
+                )
+                continue
 
             print("Clicar em gravar")
             self.clicar_v2(By.XPATH, '/html/body/div[4]/div/div[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]')
