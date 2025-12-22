@@ -8,3 +8,4 @@ service_account.json
 .pid
 .pyc
 .log
+.pid
