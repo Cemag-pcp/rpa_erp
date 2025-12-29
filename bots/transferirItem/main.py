@@ -21,17 +21,12 @@ def main():
         if rows:
             print(f"Encontradas {len(rows)} transferências a serem processadas.")
 
-            options = Options()
-            options.add_argument("--start-maximized")
-            # options.add_argument("--headless=new")  # se quiser rodar sem abrir janela
-
-            service = Service(ChromeDriverManager().install())
-
             headless = get_headless_mode_for_bot(name_bot)
+            options = Options()
             if headless:
                 options.add_argument("--headless=new")
 
-            driver = webdriver.Chrome(service=service, options=options)
+            driver = webdriver.Chrome(options=options)
 
             # Registra o PID do chromedriver em arquivo para o gerenciador poder encerrar apenas este navegador
             pid_file = os.getenv("BOT_PID_FILE")
