@@ -60,7 +60,7 @@ def verificar_transferencias():
             pass
 
 
-def enviar_status_via_api(transferencia_id, status, dep_destino, rec, qtd, observacao):
+def enviar_status_via_api(transferencia_id, status, dep_destino, rec, qtd, observacao, chave=None):
     """
     Envia o status de uma requisição de transferência para a API do Django.
     """
@@ -76,10 +76,10 @@ def enviar_status_via_api(transferencia_id, status, dep_destino, rec, qtd, obser
         "rec": rec,
         "qtd": qtd,
         "observacao": observacao,
+        "chave": chave
     }
     headers = {
         "Content-Type": "application/json",
-        # "X-API-KEY": RPA_API_KEY,
     }
 
     try:

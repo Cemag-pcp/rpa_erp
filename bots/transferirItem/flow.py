@@ -47,6 +47,13 @@ class TransferirItem(BaseERP):
             print("Clicando em insert")
             self.clicar_v2(By.XPATH,'//*[@id="solicitacoes"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]', 5)
             self.esperar(.5)
+            
+            # Buscando chave
+            print("Buscando chave da transferência")
+            chave = self.buscar_valor(By.XPATH, '//*[@id="solicitacoes"]/tbody/tr[1]/td[1]/table/tbody/tr/td/table/tbody/tr[3]/td[2]/table/tbody/tr/td[1]/input')
+            self.esperar(.5)
+            # apenas para debugar
+            print(chave)
 
             #Inputando deposito origem
             print("Escrevendo deposito origem")
@@ -226,7 +233,8 @@ class TransferirItem(BaseERP):
                 dep_destino=dep_destino,
                 rec=rec,
                 qtd=qtd,
-                observacao=observacao_text
+                observacao=observacao_text,
+                chave=chave
             )
 
             

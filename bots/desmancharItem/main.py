@@ -1,6 +1,9 @@
 import os
 
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 
 from .flow import DesmancharItem
 from core.db import get_erp_credentials_for_bot

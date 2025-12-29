@@ -1,16 +1,24 @@
 import os
 
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 
 from .flow import DesmancharItem
 from core.db import get_erp_credentials_for_bot
-
 
 def main():
 
     name_bot = 'bot_test_desmanche'
 
-    driver = webdriver.Chrome()
+    options = Options()
+    options.add_argument("--start-maximized")
+    # options.add_argument("--headless=new")  # se quiser rodar sem abrir janela
+
+    service = Service(ChromeDriverManager().install())
+
+    driver = webdriver.Chrome(service=service, options=options)
 
     # Registra o PID do chromedriver em arquivo para o gerenciador poder encerrar apenas este navegador
     pid_file = os.getenv("BOT_PID_FILE")

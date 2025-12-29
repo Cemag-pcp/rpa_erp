@@ -17,7 +17,7 @@ from selenium.common.exceptions import (
 )
 
 # =============================
-# 1. CONFIGURAÇÃO DE LOGS
+# CONFIGURAÇÃO DE LOGS
 # =============================
 def configurar_logger():
     """
@@ -47,7 +47,7 @@ def configurar_logger():
 log = configurar_logger()
 
 # =============================
-# 2. DECORATOR PARA RASTREAR PASSOS
+# DECORATOR PARA RASTREAR PASSOS
 # =============================
 def log_passo(func):
     """
@@ -84,6 +84,7 @@ class BaseERP:
         self.wait = WebDriverWait(driver, timeout)
         self.timeout = timeout
         log.info("Instância BaseERP iniciada.")
+    
     # =============================
     # UTILITÁRIOS GERAIS
     # =============================
@@ -571,3 +572,4 @@ class BaseERP:
             except:
                 loading = None
                 break
+    

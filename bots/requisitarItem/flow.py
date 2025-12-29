@@ -50,6 +50,13 @@ class RequisitarItem(BaseERP):
             self.clicar_v2(By.XPATH,'//*[@id="grdRequisicoes"]/thead/tr[1]/td[1]/table/tbody/tr/td[2]/table/tbody/tr/td[2]', 5)
             self.esperar(.5)
 
+            # Buscando chave
+            print("Buscando chave da requisicao")
+            chave = self.buscar_valor(By.XPATH, '//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td[1]/input')
+            self.esperar(.5)
+            # apenas para debugar
+            print(chave)
+
             #Inputando classe
             print("Escrevendo classe")
             self.clicar_v2(By.XPATH,'//*[@id="grdRequisicoes"]/tbody/tr[1]/td[1]/table/tbody/tr[1]/td/table/tbody/tr[1]/td[4]/table/tbody/tr/td[1]', 5)
@@ -270,6 +277,6 @@ class RequisitarItem(BaseERP):
             alerta = self.obter_mensagem_alert()
             if alerta:
                 print(f"[ALERTA] Apenas um alerta: {alerta}")
-                enviar_status_via_api(id,'OK',tipo_requisicao)
+                enviar_status_via_api(id,'OK',tipo_requisicao,chave)
                 # devolve sucesso pro banco
             self.esperar(.5)                

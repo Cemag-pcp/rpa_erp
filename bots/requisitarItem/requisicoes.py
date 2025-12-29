@@ -67,7 +67,7 @@ def verificar_requisicoes():
             pass
 
 
-def enviar_status_via_api(requisicao_id, status, tipo_requisicao):
+def enviar_status_via_api(requisicao_id, status, tipo_requisicao, chave=None):
     """
     Envia o status de uma requisição para a API do Django.
     """
@@ -80,6 +80,7 @@ def enviar_status_via_api(requisicao_id, status, tipo_requisicao):
         "id": requisicao_id,
         "status": status,
         "tipo_requisicao": tipo_requisicao,
+        "chave": chave
     }
     # headers = {
     #     "Content-Type": "application/json",

@@ -3,11 +3,12 @@ import datetime
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 
 from bots.saldoAoVivo.flow import SaldoAoVivo
 from core.db import get_erp_credentials_for_bot, get_headless_mode_for_bot
-
 
 def main():
 
