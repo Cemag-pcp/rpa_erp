@@ -40,7 +40,7 @@ def verificar_requisicoes():
                 apontamento_v2.cadastro_almox_itenssolicitacao i ON sr.item_id = i.id
             WHERE
                 sr.data_entrega IS NOT NULL
-                AND (sr.rpa IS NULL OR sr.rpa != 'OK')
+                AND (sr.rpa IS NULL OR sr.rpa ISNULL)
                 -- AND data_solicitacao >= date_trunc('month', CURRENT_DATE)
             ORDER BY
                 sr.data_solicitacao;
