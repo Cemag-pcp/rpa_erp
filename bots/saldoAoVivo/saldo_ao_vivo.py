@@ -69,15 +69,14 @@ def inserir_postgres_saldo_levantamento(df=None, tabela='ConsultaSaldoInnovaro')
 
         # Seleção final
         df_final = df[
-            ['1o. Agrupamento', 'codigo', 'descricao', '3o. Agrupamento',
+            ['1o. Agrupamento', 'codigo', 'descricao',
              'Saldo', 'Custo#Total', 'Custo#Médio', 'data']
         ].copy()
 
         df_final.columns = [
-            'primeiro_agrupamento',
+            'agrupamento',
             'codigo',
             'descricao',
-            'terceiro_agrupamento',
             'saldo',
             'custo_total',
             'custo_medio',
@@ -103,7 +102,7 @@ def inserir_postgres_saldo_levantamento(df=None, tabela='ConsultaSaldoInnovaro')
                 custo_medio,
                 data_ultimo_saldo
             )
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+            VALUES (%s,%s,%s,%s,%s,%s,%s)
             ON CONFLICT (codigo, agrupamento)
             DO UPDATE SET
                 descricao = EXCLUDED.descricao,
