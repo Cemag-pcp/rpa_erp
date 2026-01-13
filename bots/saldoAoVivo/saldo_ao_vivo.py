@@ -90,6 +90,9 @@ def inserir_postgres_saldo_central_mp(df=None, tabela='ConsultaSaldoInnovaro'):
         cursor = conn.cursor()
         cursor.execute("SET search_path TO apontamento_v2_testes")
 
+        # Limpa a tabela antes de inserir (evita TRUNCATE para não gerar lock exclusivo)
+        cursor.execute(f"DELETE FROM apontamento_v2_testes.core_{tabela}")
+
         insert_query = f"""
             INSERT INTO apontamento_v2_testes.core_{tabela} (
                 agrupamento, codigo, descricao, saldo, custo_total, custo_medio, data_ultimo_saldo
