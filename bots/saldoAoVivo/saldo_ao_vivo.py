@@ -95,24 +95,22 @@ def inserir_postgres_saldo_levantamento(df=None, tabela='ConsultaSaldoInnovaro')
 
         insert_query = f"""
             INSERT INTO apontamento_v2_testes.core_{tabela} (
-                primeiro_agrupamento,
+                agrupamento,
                 codigo,
                 descricao,
-                terceiro_agrupamento,
                 saldo,
                 custo_total,
                 custo_medio,
-                data_registro
+                data_ultimo_saldo
             )
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
-            ON CONFLICT (codigo, primeiro_agrupamento)
+            ON CONFLICT (codigo, agrupamento)
             DO UPDATE SET
                 descricao = EXCLUDED.descricao,
-                terceiro_agrupamento = EXCLUDED.terceiro_agrupamento,
                 saldo = EXCLUDED.saldo,
                 custo_total = EXCLUDED.custo_total,
                 custo_medio = EXCLUDED.custo_medio,
-                data_registro = EXCLUDED.data_registro
+                data_ultimo_saldo = EXCLUDED.data_ultimo_saldo
         """
 
         registros = [tuple(row) for row in df_final.values]
