@@ -9,6 +9,7 @@ import gspread
 from google.oauth2 import service_account
 from dotenv import load_dotenv
 from pathlib import Path
+from psycopg2.extras import execute_values
 
 from core.db import get_db_connection
 
@@ -42,7 +43,7 @@ def ultimo_arquivo():
     
     return df
 
-def inserir_postgres_saldo_levantamento(df=None, tabela='ConsultaSaldoInnovaro'):
+def inserir_postgres_saldo_central_mp(df=None, tabela='ConsultaSaldoInnovaro'):
     """
     Insere ou atualiza os dados do dataframe na tabela PostgreSQL especificada
     utilizando UPSERT, evitando locks globais.
@@ -83,39 +84,25 @@ def inserir_postgres_saldo_levantamento(df=None, tabela='ConsultaSaldoInnovaro')
         if df_final.empty:
             return 'No data to insert'
 
-        conn = get_db_connection()
-        conn.autocommit = True
-        cursor = conn.cursor()
+        registros = [tuple(row) for row in df_final.itertuples(index=False, name=None)]
 
+        conn = get_db_connection()
+        cursor = conn.cursor()
         cursor.execute("SET search_path TO apontamento_v2_testes")
 
         insert_query = f"""
             INSERT INTO apontamento_v2_testes.core_{tabela} (
-                agrupamento,
-                codigo,
-                descricao,
-                saldo,
-                custo_total,
-                custo_medio,
-                data_ultimo_saldo
-            )
-            VALUES (%s,%s,%s,%s,%s,%s,%s)
-            ON CONFLICT (codigo, agrupamento)
-            DO UPDATE SET
-                descricao = EXCLUDED.descricao,
-                saldo = EXCLUDED.saldo,
-                custo_total = EXCLUDED.custo_total,
-                custo_medio = EXCLUDED.custo_medio,
-                data_ultimo_saldo = EXCLUDED.data_ultimo_saldo
+                agrupamento, codigo, descricao, saldo, custo_total, custo_medio, data_ultimo_saldo
+            ) VALUES %s
         """
 
-        registros = [tuple(row) for row in df_final.values]
-        cursor.executemany(insert_query, registros)
+        execute_values(cursor, insert_query, registros, page_size=5000)
 
+        conn.commit()
         cursor.close()
         conn.close()
 
-        print(f"✓ {len(registros)} registros inseridos/atualizados na tabela '{tabela}' com sucesso!")
+        print(f"✓ {len(registros)} registros inseridos na tabela '{tabela}' com sucesso!")
         return 'success'
 
     except Exception as e:
