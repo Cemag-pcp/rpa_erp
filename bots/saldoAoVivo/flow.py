@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 
 from core.erp_core import BaseERP
-from .saldo_ao_vivo import inserir_gspread_saldo_central_mp, apagar_ultimo_download, inserir_gspread_saldo_levantamento, inserir_gspread_saldo_levantamento_incluindo_em_processo
+from .saldo_ao_vivo import inserir_gspread_saldo_central_mp, apagar_ultimo_download, inserir_gspread_saldo_levantamento, inserir_gspread_saldo_levantamento_incluindo_em_processo,inserir_postgres_saldo_levantamento
 
 import datetime
 
@@ -124,6 +124,8 @@ class SaldoAoVivo(BaseERP):
         inserir_gspread_saldo_levantamento()
         self.esperar(1)
         inserir_gspread_saldo_levantamento_incluindo_em_processo()
+        self.esperar(1)
+        inserir_postgres_saldo_levantamento()
         self.esperar(1)
         apagar_ultimo_download()
 
