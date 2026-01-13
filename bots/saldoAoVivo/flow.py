@@ -68,7 +68,7 @@ class SaldoAoVivo(BaseERP):
         inserir_gspread_saldo_central_mp()
         self.esperar(1)
 
-        # Inserir no pgsql
+        # inserir no pgsql        
         inserir_postgres_saldo_levantamento()
         self.esperar(1)
 

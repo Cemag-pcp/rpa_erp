@@ -60,9 +60,6 @@ def inserir_postgres_saldo_levantamento(df=None, tabela='ConsultaSaldoInnovaro')
         df['Custo#Total'] = df['Custo#Total'].apply(lambda x: float(x.replace('.', '').replace(',', '.')))
         df['Custo#Médio'] = df['Custo#Médio'].apply(lambda x: float(x.replace('.', '').replace(',', '.')))
 
-        # Filtragem
-        df = df[df['2o. Agrupamento'] == 'nan']
-
         # Extração de código e descrição
         df['codigo'] = df['3o. Agrupamento'].apply(lambda x: x.split()[0])
         df['descricao'] = df['3o. Agrupamento'].apply(lambda x: x.split('-')[1].strip())
