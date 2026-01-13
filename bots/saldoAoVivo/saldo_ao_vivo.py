@@ -44,80 +44,95 @@ def ultimo_arquivo():
 
 def inserir_postgres_saldo_levantamento(df=None, tabela='ConsultaSaldoInnovaro'):
     """
-    Insere os dados do dataframe na tabela PostgreSQL especificada.
-    
-    Args:
-        df: DataFrame pandas com os dados a serem inseridos. Se None, busca o último arquivo.
-        tabela: Nome da tabela no PostgreSQL (padrão: 'saldo_levantamento')
-    
-    Returns:
-        str: 'success' se a inserção foi bem-sucedida, ou mensagem de erro
+    Insere ou atualiza os dados do dataframe na tabela PostgreSQL especificada
+    utilizando UPSERT, evitando locks globais.
     """
     try:
-        # Se não receber df, busca o último arquivo
         if df is None:
             df = ultimo_arquivo()
-        
-        # Processamento do dataframe (mesmo processamento da função gspread)
+
+        # Limpeza de colunas
         df.rename(columns=lambda x: x.replace('="', '').replace('"', ''), inplace=True)
         df = df.applymap(lambda x: str(x).replace('="', '').replace('"', ''))
-        
+
         # Conversões numéricas
-        df['Saldo'] = df['Saldo'].apply(lambda x: float(x.replace(".","").replace(",",".")))
-        df['Custo#Total'] = df['Custo#Total'].apply(lambda x: float(x.replace(".","").replace(",",".")))
-        df['Custo#Médio'] = df['Custo#Médio'].apply(lambda x: float(x.replace(".","").replace(",",".")))
-        
+        df['Saldo'] = df['Saldo'].apply(lambda x: float(x.replace('.', '').replace(',', '.')))
+        df['Custo#Total'] = df['Custo#Total'].apply(lambda x: float(x.replace('.', '').replace(',', '.')))
+        df['Custo#Médio'] = df['Custo#Médio'].apply(lambda x: float(x.replace('.', '').replace(',', '.')))
+
         # Filtragem
         df = df[df['2o. Agrupamento'] == 'nan']
-        
+
         # Extração de código e descrição
         df['codigo'] = df['3o. Agrupamento'].apply(lambda x: x.split()[0])
-        df['descricao'] = df['3o. Agrupamento'].apply(lambda x: x.split('-')[1])
-        
-        # Seleção e renomeação de colunas para o banco
-        df_final = df[['1o. Agrupamento','codigo','descricao','3o. Agrupamento','Saldo','Custo#Total','Custo#Médio','data']].copy()
-        
-        # Renomeia colunas para padrão SQL (snake_case)
-        df_final.columns = ['primeiro_agrupamento', 'codigo', 'descricao', 'terceiro_agrupamento', 
-                           'saldo', 'custo_total', 'custo_medio', 'data_registro']
-        
-        if len(df_final) == 0:
+        df['descricao'] = df['3o. Agrupamento'].apply(lambda x: x.split('-')[1].strip())
+
+        # Seleção final
+        df_final = df[
+            ['1o. Agrupamento', 'codigo', 'descricao', '3o. Agrupamento',
+             'Saldo', 'Custo#Total', 'Custo#Médio', 'data']
+        ].copy()
+
+        df_final.columns = [
+            'primeiro_agrupamento',
+            'codigo',
+            'descricao',
+            'terceiro_agrupamento',
+            'saldo',
+            'custo_total',
+            'custo_medio',
+            'data_registro'
+        ]
+
+        if df_final.empty:
             return 'No data to insert'
-        
-        # Conecta ao banco
+
         conn = get_db_connection()
+        conn.autocommit = True
         cursor = conn.cursor()
-        
-        # Define o schema
+
         cursor.execute("SET search_path TO apontamento_v2_testes")
-        
-        # Limpa a tabela antes de inserir (opcional - remova se quiser manter histórico)
-        cursor.execute(f"TRUNCATE TABLE apontamento_v2_testes.core_{tabela}")
-        
-        # Prepara inserção em batch
-        colunas = ', '.join(df_final.columns)
-        placeholders = ', '.join(['%s'] * len(df_final.columns))
-        insert_query = f"INSERT INTO apontamento_v2_testes.core_{tabela} ({colunas}) VALUES ({placeholders})"
-        
-        # Converte dataframe para lista de tuplas
+
+        insert_query = f"""
+            INSERT INTO apontamento_v2_testes.core_{tabela} (
+                primeiro_agrupamento,
+                codigo,
+                descricao,
+                terceiro_agrupamento,
+                saldo,
+                custo_total,
+                custo_medio,
+                data_registro
+            )
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+            ON CONFLICT (codigo, primeiro_agrupamento)
+            DO UPDATE SET
+                descricao = EXCLUDED.descricao,
+                terceiro_agrupamento = EXCLUDED.terceiro_agrupamento,
+                saldo = EXCLUDED.saldo,
+                custo_total = EXCLUDED.custo_total,
+                custo_medio = EXCLUDED.custo_medio,
+                data_registro = EXCLUDED.data_registro
+        """
+
         registros = [tuple(row) for row in df_final.values]
-        
-        # Executa inserção em batch
         cursor.executemany(insert_query, registros)
-        
-        # Commit e fecha conexão
-        conn.commit()
+
         cursor.close()
         conn.close()
-        
-        print(f"✓ {len(registros)} registros inseridos na tabela '{tabela}' com sucesso!")
+
+        print(f"✓ {len(registros)} registros inseridos/atualizados na tabela '{tabela}' com sucesso!")
         return 'success'
-        
+
     except Exception as e:
         print(f"Erro ao inserir dados no PostgreSQL: {e}")
-        if 'conn' in locals():
-            conn.rollback()
-            conn.close()
+        try:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+        except Exception:
+            pass
         return f'error: {str(e)}'
 
 def inserir_gspread_saldo_central_mp():
