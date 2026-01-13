@@ -14,6 +14,34 @@ from core.db import get_db_connection
 
 load_dotenv()
 
+def ultimo_arquivo():
+
+    # Caminho para a pasta "Downloads"
+    caminho_downloads = os.path.expanduser("~") + "/Downloads"
+
+    # Lista de todos os arquivos na pasta "Downloads", ordenados por data de modificação (o mais recente primeiro)
+    lista_arquivos = glob.glob(caminho_downloads + "/*", recursive=False)
+    lista_arquivos.sort(key=lambda x: os.path.getmtime(x), reverse=True)
+
+    # Pegue o caminho do último arquivo baixado (o arquivo mais recente)
+    ultimo_arquivo_baixado = lista_arquivos[0]
+
+    print("Caminho do último arquivo baixado:", ultimo_arquivo_baixado)
+
+    df = pd.read_csv(ultimo_arquivo_baixado, sep=';', encoding='latin-1')
+    
+    df['data'] = datetime.datetime.today()
+    df['data'] = df['data'].dt.strftime('%d/%m/%Y %H:%M:%S')
+
+    df.rename(columns=lambda x: x.replace('="', '').replace('"', ''), inplace=True)
+
+    # df = df.drop(columns={'=" "'})
+    # df.columns
+    df["1o. Agrupamento"] = df["1o. Agrupamento"].apply(lambda x: str(x).replace("=", "").replace('"', ''))
+    df["2o. Agrupamento"] = df["2o. Agrupamento"].apply(lambda x: str(x).replace("=", "").replace('"', ''))
+    
+    return df
+
 def inserir_postgres_saldo_levantamento(df=None, tabela='ConsultaSaldoInnovaro'):
     """
     Insere os dados do dataframe na tabela PostgreSQL especificada.
@@ -91,34 +119,6 @@ def inserir_postgres_saldo_levantamento(df=None, tabela='ConsultaSaldoInnovaro')
             conn.rollback()
             conn.close()
         return f'error: {str(e)}'
-
-def ultimo_arquivo():
-
-    # Caminho para a pasta "Downloads"
-    caminho_downloads = os.path.expanduser("~") + "/Downloads"
-
-    # Lista de todos os arquivos na pasta "Downloads", ordenados por data de modificação (o mais recente primeiro)
-    lista_arquivos = glob.glob(caminho_downloads + "/*", recursive=False)
-    lista_arquivos.sort(key=lambda x: os.path.getmtime(x), reverse=True)
-
-    # Pegue o caminho do último arquivo baixado (o arquivo mais recente)
-    ultimo_arquivo_baixado = lista_arquivos[0]
-
-    print("Caminho do último arquivo baixado:", ultimo_arquivo_baixado)
-
-    df = pd.read_csv(ultimo_arquivo_baixado, sep=';', encoding='latin-1')
-    
-    df['data'] = datetime.datetime.today()
-    df['data'] = df['data'].dt.strftime('%d/%m/%Y %H:%M:%S')
-
-    df.rename(columns=lambda x: x.replace('="', '').replace('"', ''), inplace=True)
-
-    # df = df.drop(columns={'=" "'})
-    # df.columns
-    df["1o. Agrupamento"] = df["1o. Agrupamento"].apply(lambda x: str(x).replace("=", "").replace('"', ''))
-    df["2o. Agrupamento"] = df["2o. Agrupamento"].apply(lambda x: str(x).replace("=", "").replace('"', ''))
-    
-    return df
 
 def inserir_gspread_saldo_central_mp():
 

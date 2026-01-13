@@ -68,6 +68,10 @@ class SaldoAoVivo(BaseERP):
         inserir_gspread_saldo_central_mp()
         self.esperar(1)
 
+        # Inserir no pgsql
+        inserir_postgres_saldo_levantamento()
+        self.esperar(1)
+
         # fechar abas
         self.sair_iframe()
         self.fechar_aba_ate_fechar()
@@ -124,8 +128,6 @@ class SaldoAoVivo(BaseERP):
         inserir_gspread_saldo_levantamento()
         self.esperar(1)
         inserir_gspread_saldo_levantamento_incluindo_em_processo()
-        self.esperar(1)
-        inserir_postgres_saldo_levantamento()
         self.esperar(1)
         apagar_ultimo_download()
 
